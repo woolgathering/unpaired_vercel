@@ -5,7 +5,8 @@ Landing page for Unpaired — premium merino/alpaca technical socks for trail, h
 ## Structure
 
 ```
-Unpaired.dc.html                    Live landing page (the deployed root)
+index.html                          Deployed page (copy of Unpaired.dc.html)
+Unpaired.dc.html                    Editable source of the landing page
 _drafts/                            Not deployed — WIP / reference only
   Unpaired - Full Homepage.dc.html  Longer marketing homepage (parked)
 assets/
@@ -30,8 +31,10 @@ Self-hosted in `assets/fonts/` so they reproduce on any host:
 The repo is static — no build step.
 
 1. Import the repo in Vercel. Framework preset: **Other**. Leave build command empty, output directory = repo root.
-2. `vercel.json` rewrites `/` to `/Unpaired.dc.html`, so the landing page loads at the root domain.
+2. `index.html` is served at the root domain automatically — no rewrite needed. `cleanUrls` is on, so any future pages resolve without the `.html` extension (`about.html` → `/about`).
 3. `.vercelignore` excludes `_drafts/` and `uploads/`, so the parked homepage is not deployed and cannot be reached by URL.
+
+**After editing `Unpaired.dc.html`, copy it over `index.html` before deploying** — `index.html` is the file Vercel serves.
 
 ## Email capture
 
