@@ -52,7 +52,7 @@
           <input type="email" required="{{ true }}" placeholder="Email Address" name="CONTACT_EMAIL" value="{{ email }}" onChange="{{ handleEmailChange }}" style="flex:1;min-width:220px;max-width:320px;padding:16px 18px;font-size:14px;font-family:'Syne Mono',monospace;border:none;border-radius:8px;background:#f4f2ee;color:#1f3d2b;">
           <button type="submit" disabled="{{ captchaDisabled }}" style="background:{{ buttonBg }};color:#f4f2ee;border:none;font-weight:700;font-size:14px;font-family:'Syne Mono',monospace;padding:16px 24px;border-radius:999px;cursor:{{ buttonCursor }};">Notify Me</button>
         </div>
-        <div className="g-recaptcha" data-sitekey="6Lf3dqItAAAAAOztyEerMEKAeIep66yVhxbzveIg" data-callback="{{ handleCaptchaSuccess }}" data-expired-callback="{{ handleCaptchaExpired }}"></div>
+        <div id="zc-recaptcha-slot"></div>
         <input type="hidden" name="submitType" value="optinCustomView">
         <input type="hidden" name="emailReportId" value="">
         <input type="hidden" name="formType" value="QuickForm">
@@ -80,6 +80,26 @@
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = { email: '', submitted: false, captchaOk: false };
+  componentDidMount() {
+    const tryRender = () => {
+      const slot = document.getElementById('zc-recaptcha-slot');
+      if (window.grecaptcha && window.grecaptcha.render && slot && !this._rendered) {
+        this._rendered = true;
+        try {
+          window.grecaptcha.render(slot, {
+            sitekey: '6Lf3dqItAAAAAOztyEerMEKAeIep66yVhxbzveIg',
+            callback: () => this.setState({ captchaOk: true }),
+            'expired-callback': () => this.setState({ captchaOk: false }),
+          });
+        } catch (err) {
+          console.error('grecaptcha render error', err);
+        }
+      } else if (!this._rendered) {
+        setTimeout(tryRender, 300);
+      }
+    };
+    tryRender();
+  }
   renderVals() {
     const captchaDisabled = !this.state.captchaOk;
     return {
@@ -90,8 +110,6 @@ class Component extends DCLogic {
       buttonBg: captchaDisabled ? '#8a877f' : '#e8542f',
       buttonCursor: captchaDisabled ? 'not-allowed' : 'pointer',
       handleEmailChange: (e) => this.setState({ email: e.target.value }),
-      handleCaptchaSuccess: () => this.setState({ captchaOk: true }),
-      handleCaptchaExpired: () => this.setState({ captchaOk: false }),
       handleSubmit: (e) => {
         if (!this.state.email || !this.state.captchaOk) { e.preventDefault(); return; }
         this.setState({ submitted: true });
