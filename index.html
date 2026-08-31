@@ -6,6 +6,7 @@
 <script src="./support.js"></script>
 <title>Unpaired — technical wool socks</title>
 <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon-180.png">
 </head>
 <body>
 <x-dc>
@@ -19,6 +20,7 @@
   a{color:#1f3d2b;}
   a:hover{color:#e8542f;}
 </style>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </helmet>
 <div style="position:relative;font-family:'Syne Mono',monospace;color:#f4f2ee;min-height:100vh;display:flex;flex-direction:column;">
   <div style="position:fixed;inset:0;background:#1f3d2b;"></div>
@@ -45,9 +47,24 @@
       <div style="background:#14261b;color:#f4f2ee;padding:16px 22px;border-radius:12px;font-size:14px;">Thanks — you're on the list.</div>
     </sc-if>
     <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
-      <form onSubmit="{{ handleSubmit }}" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;width:100%;">
-        <input type="email" required="{{ true }}" placeholder="Email Address" value="{{ email }}" onChange="{{ handleEmailChange }}" style="flex:1;min-width:220px;max-width:320px;padding:16px 18px;font-size:14px;font-family:'Syne Mono',monospace;border:none;border-radius:8px;background:#f4f2ee;color:#1f3d2b;">
-        <button type="submit" style="background:#e8542f;color:#f4f2ee;border:none;font-weight:700;font-size:14px;font-family:'Syne Mono',monospace;padding:16px 24px;border-radius:999px;cursor:pointer;">Notify Me</button>
+      <form action="https://zgnp-zngp.maillist-manage.com/weboptin.zc" method="POST" target="zc_hidden_iframe" onSubmit="{{ handleSubmit }}" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;width:100%;">
+          <input type="email" required="{{ true }}" placeholder="Email Address" name="CONTACT_EMAIL" value="{{ email }}" onChange="{{ handleEmailChange }}" style="flex:1;min-width:220px;max-width:320px;padding:16px 18px;font-size:14px;font-family:'Syne Mono',monospace;border:none;border-radius:8px;background:#f4f2ee;color:#1f3d2b;">
+          <button type="submit" disabled="{{ captchaDisabled }}" style="background:{{ buttonBg }};color:#f4f2ee;border:none;font-weight:700;font-size:14px;font-family:'Syne Mono',monospace;padding:16px 24px;border-radius:999px;cursor:{{ buttonCursor }};">Notify Me</button>
+        </div>
+        <div className="g-recaptcha" data-sitekey="6Lf3dqItAAAAAOztyEerMEKAeIep66yVhxbzveIg" data-callback="{{ handleCaptchaSuccess }}" data-expired-callback="{{ handleCaptchaExpired }}"></div>
+        <input type="hidden" name="submitType" value="optinCustomView">
+        <input type="hidden" name="emailReportId" value="">
+        <input type="hidden" name="formType" value="QuickForm">
+        <input type="hidden" name="zx" value="11bd3f45">
+        <input type="hidden" name="zcvers" value="3.0">
+        <input type="hidden" name="oldListIds" value="">
+        <input type="hidden" name="mode" value="OptinCreateView">
+        <input type="hidden" name="zcld" value="11787e906c442a69c">
+        <input type="hidden" name="zctd" value="11787e906c4427f71">
+        <input type="hidden" name="zc_trackCode" value="ZCFORMVIEW">
+        <input type="hidden" name="zc_formIx" value="3z8268d3405f2501ea2bdcbcc77e146f8762bfce2ef7ecf06a0e342af6b8db334b">
+        <input type="hidden" name="scriptless" value="yes">
       </form>
     </sc-if>
   </section>
@@ -56,22 +73,28 @@
     <span style="font-size:12px;color:#e6e6e0;">© 2026 Unpaired</span>
     <a href="mailto:hello@unpairedapparel.com" style="font-size:12px;text-decoration:underline;color:#f4f2ee;">hello@unpairedapparel.com</a>
   </footer>
-
+  <iframe name="zc_hidden_iframe" style="display:none;"></iframe>
 </div>
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { email: '', submitted: false };
+  state = { email: '', submitted: false, captchaOk: false };
   renderVals() {
+    const captchaDisabled = !this.state.captchaOk;
     return {
       email: this.state.email,
       submitted: this.state.submitted,
       notSubmitted: !this.state.submitted,
+      captchaDisabled,
+      buttonBg: captchaDisabled ? '#8a877f' : '#e8542f',
+      buttonCursor: captchaDisabled ? 'not-allowed' : 'pointer',
       handleEmailChange: (e) => this.setState({ email: e.target.value }),
+      handleCaptchaSuccess: () => this.setState({ captchaOk: true }),
+      handleCaptchaExpired: () => this.setState({ captchaOk: false }),
       handleSubmit: (e) => {
-        e.preventDefault();
-        if (this.state.email) this.setState({ submitted: true });
+        if (!this.state.email || !this.state.captchaOk) { e.preventDefault(); return; }
+        this.setState({ submitted: true });
       },
     };
   }

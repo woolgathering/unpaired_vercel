@@ -11,6 +11,7 @@ _drafts/                            Not deployed — WIP / reference only
   Unpaired - Full Homepage.dc.html  Longer marketing homepage (parked)
 assets/
   favicon.svg                       Brand mark
+  favicon-180.png                   180×180 raster icon (apple-touch-icon)
   fonts/                            Self-hosted webfonts
 Email Signup Integration Notes.md   Plan for the email capture backend
 ```
