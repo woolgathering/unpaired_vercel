@@ -53,6 +53,7 @@
           <button type="submit" disabled="{{ captchaDisabled }}" style="background:{{ buttonBg }};color:#f4f2ee;border:none;font-weight:700;font-size:14px;font-family:'Syne Mono',monospace;padding:16px 24px;border-radius:999px;cursor:{{ buttonCursor }};">Notify Me</button>
         </div>
         <div id="zc-recaptcha-slot"></div>
+        <input type="hidden" id="fieldBorder" value="">
         <input type="hidden" name="submitType" value="optinCustomView">
         <input type="hidden" name="emailReportId" value="">
         <input type="hidden" name="formType" value="QuickForm">
@@ -62,9 +63,15 @@
         <input type="hidden" name="mode" value="OptinCreateView">
         <input type="hidden" name="zcld" value="11787e906c442a69c">
         <input type="hidden" name="zctd" value="11787e906c4427f71">
+        <input type="hidden" id="document_domain" value="">
+        <input type="hidden" id="zc_Url" value="zgnp-zngp.maillist-manage.com">
+        <input type="hidden" id="new_optin_response_in" value="0">
+        <input type="hidden" id="duplicate_optin_response_in" value="0">
         <input type="hidden" name="zc_trackCode" value="ZCFORMVIEW">
         <input type="hidden" name="zc_formIx" value="3z8268d3405f2501ea2bdcbcc77e146f8762bfce2ef7ecf06a0e342af6b8db334b">
+        <input type="hidden" id="viewFrom" value="URL_ACTION">
         <input type="hidden" name="scriptless" value="yes">
+        <input type="hidden" id="zc_spmSubmit" name="zc_spmSubmit" value="ZCSPMSUBMIT">
       </form>
     </sc-if>
   </section>
@@ -112,6 +119,8 @@ class Component extends DCLogic {
       handleEmailChange: (e) => this.setState({ email: e.target.value }),
       handleSubmit: (e) => {
         if (!this.state.email || !this.state.captchaOk) { e.preventDefault(); return; }
+        const spamField = e.target.querySelector('#zc_spmSubmit');
+        if (spamField) spamField.remove();
         this.setState({ submitted: true });
       },
     };
