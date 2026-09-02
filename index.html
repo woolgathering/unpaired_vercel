@@ -20,7 +20,6 @@
   a{color:#1f3d2b;}
   a:hover{color:#e8542f;}
 </style>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </helmet>
 <div style="position:relative;font-family:'Syne Mono',monospace;color:#f4f2ee;min-height:100vh;display:flex;flex-direction:column;">
   <div style="position:fixed;inset:0;background:#1f3d2b;"></div>
@@ -47,31 +46,12 @@
       <div style="background:#14261b;color:#f4f2ee;padding:16px 22px;border-radius:12px;font-size:14px;">Thanks — you're on the list.</div>
     </sc-if>
     <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
-      <form action="https://zgnp-zngp.maillist-manage.com/weboptin.zc" method="POST" target="zc_hidden_iframe" onSubmit="{{ handleSubmit }}" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;">
+      <form action="https://assets.mailerlite.com/jsonp/2590954/forms/197444137077703761/subscribe" method="POST" target="ml_hidden_iframe" onSubmit="{{ handleSubmit }}" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;">
         <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;width:100%;">
-          <input type="email" required="{{ true }}" placeholder="Email Address" name="CONTACT_EMAIL" value="{{ email }}" onChange="{{ handleEmailChange }}" style="flex:1;min-width:220px;max-width:320px;padding:16px 18px;font-size:14px;font-family:'Syne Mono',monospace;border:none;border-radius:8px;background:#f4f2ee;color:#1f3d2b;">
-          <button type="submit" disabled="{{ captchaDisabled }}" style="background:{{ buttonBg }};color:#f4f2ee;border:none;font-weight:700;font-size:14px;font-family:'Syne Mono',monospace;padding:16px 24px;border-radius:999px;cursor:{{ buttonCursor }};">Notify Me</button>
+          <input type="email" required="{{ true }}" placeholder="Email Address" name="fields[email]" value="{{ email }}" onChange="{{ handleEmailChange }}" style="flex:1;min-width:220px;max-width:320px;padding:16px 18px;font-size:14px;font-family:'Syne Mono',monospace;border:none;border-radius:8px;background:#f4f2ee;color:#1f3d2b;">
+          <button type="submit" style="background:#e8542f;color:#f4f2ee;border:none;font-weight:700;font-size:14px;font-family:'Syne Mono',monospace;padding:16px 24px;border-radius:999px;cursor:pointer;">Notify Me</button>
         </div>
-        <div id="zc-recaptcha-slot"></div>
-        <input type="hidden" id="fieldBorder" value="">
-        <input type="hidden" name="submitType" value="optinCustomView">
-        <input type="hidden" name="emailReportId" value="">
-        <input type="hidden" name="formType" value="QuickForm">
-        <input type="hidden" name="zx" value="11bd3f45">
-        <input type="hidden" name="zcvers" value="3.0">
-        <input type="hidden" name="oldListIds" value="">
-        <input type="hidden" name="mode" value="OptinCreateView">
-        <input type="hidden" name="zcld" value="11787e906c442a69c">
-        <input type="hidden" name="zctd" value="11787e906c4427f71">
-        <input type="hidden" id="document_domain" value="">
-        <input type="hidden" id="zc_Url" value="zgnp-zngp.maillist-manage.com">
-        <input type="hidden" id="new_optin_response_in" value="0">
-        <input type="hidden" id="duplicate_optin_response_in" value="0">
-        <input type="hidden" name="zc_trackCode" value="ZCFORMVIEW">
-        <input type="hidden" name="zc_formIx" value="3z8268d3405f2501ea2bdcbcc77e146f8762bfce2ef7ecf06a0e342af6b8db334b">
-        <input type="hidden" id="viewFrom" value="URL_ACTION">
-        <input type="hidden" name="scriptless" value="yes">
-        <input type="hidden" id="zc_spmSubmit" name="zc_spmSubmit" value="ZCSPMSUBMIT">
+        <input type="hidden" name="ml-submit" value="1">
       </form>
     </sc-if>
   </section>
@@ -80,47 +60,21 @@
     <span style="font-size:12px;color:#e6e6e0;">© 2026 Unpaired</span>
     <a href="mailto:hello@unpairedapparel.com" style="font-size:12px;text-decoration:underline;color:#f4f2ee;">hello@unpairedapparel.com</a>
   </footer>
-  <iframe name="zc_hidden_iframe" style="display:none;"></iframe>
+  <iframe name="ml_hidden_iframe" style="display:none;"></iframe>
 </div>
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { email: '', submitted: false, captchaOk: false };
-  componentDidMount() {
-    const tryRender = () => {
-      const slot = document.getElementById('zc-recaptcha-slot');
-      if (window.grecaptcha && window.grecaptcha.render && slot && !this._rendered) {
-        this._rendered = true;
-        try {
-          window.grecaptcha.render(slot, {
-            sitekey: '6Lf3dqItAAAAAOztyEerMEKAeIep66yVhxbzveIg',
-            callback: () => this.setState({ captchaOk: true }),
-            'expired-callback': () => this.setState({ captchaOk: false }),
-          });
-        } catch (err) {
-          console.error('grecaptcha render error', err);
-        }
-      } else if (!this._rendered) {
-        setTimeout(tryRender, 300);
-      }
-    };
-    tryRender();
-  }
+  state = { email: '', submitted: false };
   renderVals() {
-    const captchaDisabled = !this.state.captchaOk;
     return {
       email: this.state.email,
       submitted: this.state.submitted,
       notSubmitted: !this.state.submitted,
-      captchaDisabled,
-      buttonBg: captchaDisabled ? '#8a877f' : '#e8542f',
-      buttonCursor: captchaDisabled ? 'not-allowed' : 'pointer',
       handleEmailChange: (e) => this.setState({ email: e.target.value }),
       handleSubmit: (e) => {
-        if (!this.state.email || !this.state.captchaOk) { e.preventDefault(); return; }
-        const spamField = e.target.querySelector('#zc_spmSubmit');
-        if (spamField) spamField.remove();
+        if (!this.state.email) { e.preventDefault(); return; }
         this.setState({ submitted: true });
       },
     };
